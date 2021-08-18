@@ -11,19 +11,22 @@ curr_time=$(date +"%Y-%m-%d_%H-%M-%S")
 
 workdir=$command$curr_time
 echo "work_dir "$workdir
+mkdir -p $workdir
 
 # Copy exec file
-gsutil cp -r gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command $command
+gsutil cp -r gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/* $workdir
 
 # go to folder $command
 cd $workdir
 
 # exec with params
 params=$(echo $params | sed 's/&/ /g')
-main.sh $params > outputlog.txt 2>&1
+ls
+chmod 777 -R .
+bash main.sh $params 2>&1 | tee  outputlog.txt
 
 # copy file to storage
-gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/outputlog.txt 
+gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/outputlog$curr_time.txt 
 
 # remove the command folder
 cd ..

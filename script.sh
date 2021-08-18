@@ -1,52 +1,31 @@
-#!/usr/bin/env bash
-# Copyright 2020 Google LLC
+# get parameters
+# command=${1}
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+set -x
 
-##
-# script.sh
-# Uses gcloud to create a report of Cloud Run services.
-# Uses gsutil to write the report to Cloud Storage.
-#
-# Requires CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET environment variable
-##
+CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET=cloudrun_exec_cli_archive_bucket
+echo "scripts arguments" ${1:1}
+IFS='<<>>' read -r command parameters <<< "${1:1}"
 
-# [START cloudrun_report_script]
-set -eo pipefail
+curr_time=$(date +"%Y-%m-%d_%H-%M-%S")
 
-# Check for required environment variables.
-requireEnv() {
-  test "${!1}" || (echo "gcloud-report: '$1' not found" >&2 && exit 1)
-}
-requireEnv CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET
+workdir=$command$curr_time
+echo "work_dir "$workdir
 
-# Prepare formatting: Default search term to include all services.
-search=${1:-'.'}
-limits='spec.template.spec.containers.resources.limits.flatten("", "", " ")'
-format='table[box, title="Cloud Run Services"](name,status.url,metadata.annotations.[serving.knative.dev/creator],'${limits}')'
+# Copy exec file
+gsutil cp -r gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command $command
 
-# Create a specific object name that will not be overridden in the future.
-obj="gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/report-${search}-$(date +%s).txt"
+# go to folder $command
+cd $workdir
 
-# Write a report containing the service name, service URL, service account or user that
-# deployed it, and any explicitly configured service "limits" such as CPU or Memory.
-gcloud run services list \
-  --platform managed \
-  --format "${format}" \
-  --filter "metadata.name~${search}" | gsutil -q cp -J - "${obj}"
+# exec with params
+params=$(echo $params | sed 's/&/ /g')
+main.sh $params > outputlog.txt 2>&1
 
-# /dev/stderr is sent to Cloud Logging.
-echo "gcloud-report: wrote to ${obj}" >&2
-echo "Wrote report to ${obj}"
+# copy file to storage
+gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/outputlog.txt 
 
-# [END cloudrun_report_script]
+# remove the command folder
+cd ..
+rm -rf $workdir
+
