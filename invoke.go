@@ -22,7 +22,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"regexp"
 )
 
 func main() {
@@ -43,11 +42,13 @@ func main() {
 }
 
 func scriptHandler(w http.ResponseWriter, r *http.Request) {
-	command := r.URL.Query().Get("command")
+	// command := r.URL.PathQuery().Get("run")
+	command := r.URL.Path
 	params := r.URL.Query().Get("params")
 	
 	log.Printf("Exec command: %v", command)
-	cmd := exec.CommandContext(r.Context(), "/bin/bash", command, params)
+	log.Printf("Exec params: %v", params)
+	cmd := exec.CommandContext(r.Context(), "/bin/bash", "main.sh", command+ "<<>>"+params)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
 	if err != nil {
