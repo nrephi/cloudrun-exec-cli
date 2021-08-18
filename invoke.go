@@ -46,6 +46,7 @@ func scriptHandler(w http.ResponseWriter, r *http.Request) {
 	command := r.URL.Query().Get("command")
 	params := r.URL.Query().Get("params")
 	
+	log.Printf("Exec command: %v", command)
 	cmd := exec.CommandContext(r.Context(), "/bin/bash", command, params)
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
@@ -54,7 +55,7 @@ func scriptHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	log.Printf(out)
+	w.Write(out)
 }
 
 // [END cloudrun_report_server]
