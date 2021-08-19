@@ -1,2 +1,3 @@
 set -x
-gcloud container clusters resize k8sterraform --num-nodes=0
+echo "Resize cluster to "$1" nodes"
+gcloud container clusters resize k8sterraform --num-nodes=$1 --region=europe-west1 --quiet

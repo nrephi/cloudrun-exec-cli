@@ -26,12 +26,12 @@ gsutil iam ch \
   gs://$CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET
 
 # Créez votre conteneur et publiez-le dans Container Registry 
-# gcloud builds submit --tag gcr.io/$PROJECT_ID/$DOCKER_IMAGE
+gcloud builds submit --tag gcr.io/$PROJECT_ID/$DOCKER_IMAGE
 
 # Ou sinon créez le localement et poussez le dans le container registry de google
-docker build --tag gcr.io/$PROJECT_ID/$DOCKER_IMAGE .
-# assurez
-docker push gcr.io/$PROJECT_ID/$DOCKER_IMAGE
+# docker build --tag gcr.io/$PROJECT_ID/$DOCKER_IMAGE .
+# Poussez le sur gcr.io
+# docker push gcr.io/$PROJECT_ID/$DOCKER_IMAGE
 
 # Exécutez la commande suivante pour déployer votre service 
 gcloud run deploy $DOCKER_IMAGE \
@@ -42,6 +42,6 @@ gcloud run deploy $DOCKER_IMAGE \
    --platform managed --region europe-west1 
 
 # Tester la fonction
-curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" https://cloudrun-exec-cli-6p2nzfdfyq-ew.a.run.app/node_to_zero
+curl -H "Authorization: Bearer $(gcloud auth print-identity-token)" https://cloudrun-exec-cli-6p2nzfdfyq-ew.a.run.app/resize_k8s?params=0
 
 # curl http://localhost:8080/node_to_zero

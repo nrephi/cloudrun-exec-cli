@@ -3,7 +3,7 @@
 #
 set -x
 
-CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET=cloudrun_exec_cli_archive_bucket
+# CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET=cloudrun_exec_cli_archive_bucket
 echo "scripts arguments" ${1:1}
 IFS='<<>>' read -r command parameters <<< "${1:1}"
 
@@ -19,11 +19,11 @@ gsutil cp -r gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/* $workdir
 # go to folder $command
 cd $workdir
 
-# exec with params
-params=$(echo $params | sed 's/&/ /g')
+# exec with parameters
+parameters=$(echo ${parameters:3} | sed 's/&/ /g')
 ls
 chmod 777 -R .
-bash main.sh $params 2>&1 | tee  outputlog.txt
+bash main.sh $parameters 2>&1 | tee  outputlog.txt
 
 # copy file to storage
 gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/outputlog$curr_time.txt 

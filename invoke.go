@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// [START cloudrun_report_server]
-
 // Service gcloud-report is a Cloud Run shell-script-as-a-service.
 package main
 
