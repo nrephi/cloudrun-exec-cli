@@ -17,7 +17,8 @@
 # Use the official golang image to create a binary.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.15-buster as builder
+# FROM golang:1.19.0-buster as builder
+FROM golang:1.19-buster as builder
 
 # Create and change to the app directory.
 WORKDIR /app
@@ -40,16 +41,14 @@ FROM gcr.io/google.com/cloudsdktool/cloud-sdk:slim
 
 WORKDIR /app
 
-RUN apt update -y
-RUN apt install jq -y
-RUN apt install wget -y
+RUN apt update && apt install jq wget -y
 
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
 COPY *.sh /app/
-COPY commands/ /app/commands
+# COPY commands/ /app/commands
 RUN chmod +x /app/*.sh
-RUN chmod -R +x /app/commands/
+# RUN chmod -R +x /app/commands/
 
 # Run the web service on container startup.
 CMD ["/app/server"]
