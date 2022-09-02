@@ -21,6 +21,9 @@ gcloud iam service-accounts create $SERVICE_ACCOUNT
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member=serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com \
   --role roles/run.viewer
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+  --member=serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com \
+  --role roles/run.invoker
 
 # give the service account right to impersonate
 gcloud projects add-iam-policy-binding $othersProjects \
@@ -52,3 +55,7 @@ gcloud run deploy $DOCKER_IMAGE \
 curl -H "Authorization: Bearer $(gcloud auth print-identity-token)"  --data-urlencode "params='accords.app, dena mwana accords'" https://bash.rephi.app/click
 
 # curl http://localhost:8080/node_to_zero
+
+
+# create cloud cheduler
+gcloud scheduler jobs create http click-accords-app --project=$PROJECT_ID --location=europe-west1 --schedule="*/20 * * * *" --uri=https://bash-qgaicxr67q-ew.a.run.appclick
