@@ -20,7 +20,7 @@ http_access allow authenticated
 """ >> /etc/squid/squid.conf
 
 touch /etc/squid/passwd
-echo "MonSquidPwd06" | htpasswd -c -i /etc/squid/passwd squid
+echo "****" | htpasswd -c -i /etc/squid/passwd squid
 export CFLAGS=" -Dbind=SOCKSbind "
 export CXXFLAGS=" -Dbind=SOCKSbind "
 export LDADD=" -lsocks "
