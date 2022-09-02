@@ -40,6 +40,10 @@ FROM gcr.io/google.com/cloudsdktool/cloud-sdk:slim
 
 WORKDIR /app
 
+RUN apt update -y
+RUN apt install jq -y
+RUN apt install wget -y
+
 # Copy the binary to the production image from the builder stage.
 COPY --from=builder /app/server /app/server
 COPY *.sh /app/
