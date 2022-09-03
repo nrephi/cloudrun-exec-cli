@@ -23,7 +23,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --role roles/run.viewer
 gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member=serviceAccount:$SERVICE_ACCOUNT@$PROJECT_ID.iam.gserviceaccount.com \
-  --role roles/run.invoker
+  --role roles/cloudtasks.owner
 
 # give the service account right to impersonate
 gcloud projects add-iam-policy-binding $othersProjects \
