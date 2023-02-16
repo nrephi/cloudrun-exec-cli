@@ -23,7 +23,7 @@ cd $workdir
 parameters=$(echo ${parameters:3} | sed 's/&/ /g')
 ls
 chmod 777 -R .
-bash -x main.sh $parameters 2>&1 | tee  outputlog.txt
+bash -x main.sh "$parameters" 2>&1 | tee  outputlog.txt
 
 # copy file to storage
 gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/logs/outputlog$curr_time.txt 
