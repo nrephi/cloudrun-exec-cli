@@ -1,3 +1,4 @@
+git pull
 PROJECT_ID="kela-presta-325511"
 CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET="rephi_bash"
 SERVICE_ACCOUNT="bash-identity"
