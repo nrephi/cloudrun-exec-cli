@@ -8,6 +8,7 @@ echo "scripts arguments" ${1:1}
 IFS='<<>>' read -r command parameters <<< "${1:1}"
 
 curr_time=$(date +"%Y-%m-%d_%H-%M-%S")
+curr_date=$(date +"%Y-%m-%d")
 
 workdir=$command$curr_time
 echo "work_dir "$workdir
@@ -26,7 +27,7 @@ chmod 777 -R .
 bash -x main.sh "$parameters" 2>&1 | tee  outputlog.txt
 
 # copy file to storage
-gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/logs/outputlog$curr_time.txt 
+gsutil cp outputlog.txt gs://${CLOUDRUN_EXEC_CLI_ARCHIVE_BUCKET}/$command/logs/$curr_date/vm_$curr_time.txt 
 
 # remove the command folder
 cd ..
